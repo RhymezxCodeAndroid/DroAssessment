@@ -1,0 +1,2 @@
+include ':DroAssessmentApp'
+rootProject.name = "DroAssessment"
