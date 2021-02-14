@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_weight="10"
@@ -41,7 +42,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/successful"
+        android:id="@+id/product_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
@@ -65,21 +66,29 @@
         android:textColor="@color/cardview_light_background"
         android:textSize="12sp"
         app:layout_constraintStart_toEndOf="@+id/drug_description"
-        app:layout_constraintTop_toBottomOf="@+id/successful" />
+        app:layout_constraintTop_toBottomOf="@+id/product_name" />
+
+    <ImageView
+        android:id="@+id/naira"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginTop="15dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_naira_24px"
+        app:layout_constraintEnd_toStartOf="@+id/total_drug_price"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/price"
+        android:id="@+id/total_drug_price"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
         android:layout_marginEnd="10dp"
-        android:paddingStart="10dp"
-        android:paddingTop="5dp"
-        android:paddingEnd="10dp"
-        android:paddingBottom="5dp"
+        android:fontFamily="@font/proxima_nova_regular"
         android:text="@string/n1000"
         android:textColor="@android:color/background_light"
-        android:textSize="14sp"
+        android:textSize="18sp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -88,7 +97,7 @@
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="20dp"
         android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView"
@@ -99,16 +108,15 @@
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_marginTop="30dp"
-        android:layout_marginEnd="5dp"
         android:background="@drawable/oval_shape"
         android:backgroundTint="#FFFFFF"
         android:fontFamily="@font/proxima_nova_regular"
         android:gravity="center"
         android:text="@string/minus"
-        android:textSize="36sp"
+        android:textSize="30sp"
         android:visibility="gone"
         app:layout_constraintEnd_toStartOf="@+id/number_of_products"
-        app:layout_constraintTop_toBottomOf="@+id/price" />
+        app:layout_constraintTop_toBottomOf="@+id/total_drug_price" />
 
     <TextView
         android:id="@+id/number_of_products"
@@ -116,6 +124,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="35dp"
         android:layout_marginEnd="5dp"
+        android:layout_marginBottom="5dp"
         android:fontFamily="@font/proxima_nova_regular"
         android:paddingStart="10dp"
         android:paddingTop="5dp"
@@ -127,23 +136,24 @@
         android:textSize="18sp"
         android:textStyle="bold"
         android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/minus_product"
         app:layout_constraintEnd_toStartOf="@+id/add_product"
-        app:layout_constraintTop_toBottomOf="@+id/price" />
+        app:layout_constraintTop_toBottomOf="@+id/naira" />
 
     <TextView
         android:id="@+id/add_product"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_marginTop="30dp"
-        android:layout_marginEnd="10dp"
+        android:layout_marginEnd="20dp"
         android:background="@drawable/oval_shape"
         android:backgroundTint="#FFFFFF"
         android:fontFamily="@font/proxima_nova_regular"
         android:gravity="center"
         android:text="@string/plus"
-        android:textSize="36sp"
+        android:textSize="30sp"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/price" />
+        app:layout_constraintTop_toBottomOf="@+id/total_drug_price" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

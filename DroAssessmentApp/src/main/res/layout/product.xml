@@ -25,7 +25,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/successful"
+            android:id="@+id/product_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:fontFamily="@font/proxima_nova_regular"
@@ -45,7 +45,7 @@
             android:textSize="12sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/successful" />
+            app:layout_constraintTop_toBottomOf="@+id/product_name" />
 
         <TextView
             android:id="@+id/drug_gram"
