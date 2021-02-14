@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white"
-    tools:context=".Activities.ViewProductsActivity">
+    android:background="@android:color/white">
 
 
     <androidx.appcompat.widget.Toolbar
@@ -29,6 +33,7 @@
                 android:fontFamily="@font/proxima_nova_regular"
                 android:gravity="bottom|center_horizontal"
                 android:text="@string/items"
+                android:textAlignment="center"
                 android:textSize="14sp"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -59,6 +64,7 @@
         android:src="@drawable/ic_up_down_arrow_24px"
         app:layout_constraintEnd_toStartOf="@+id/filter_button"
         app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 
@@ -78,7 +84,9 @@
         android:id="@+id/filter_button"
         android:layout_width="50dp"
         android:layout_height="50dp"
+        android:layout_marginStart="30dp"
         android:layout_marginTop="10dp"
+        android:layout_marginEnd="30dp"
         android:background="@drawable/oval_shape"
         android:src="@drawable/ic_filter_24px"
         app:layout_constraintEnd_toStartOf="@+id/search_button"
@@ -86,7 +94,20 @@
         app:layout_constraintStart_toEndOf="@+id/sort_button"
         app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 
+    <SearchView
+        android:id="@+id/searchView"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:background="@drawable/round_corner_stroke_search"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/sort_button" />
+
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
         android:layout_width="0dp"
         android:layout_height="599dp"
         android:layout_marginStart="10dp"
@@ -95,8 +116,18 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.555"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/filter_button"
+        app:layout_constraintTop_toBottomOf="@+id/searchView"
+        tools:itemCount="2"
         tools:listitem="@layout/product" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+    <FrameLayout
+        android:id="@+id/search_products_bottom_sheet"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+        <include layout="@layout/bottom_sheet"/>
+    </FrameLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

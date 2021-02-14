@@ -14,5 +14,13 @@
     <string name="_1">1</string>
     <string name="total">Total</string>
     <string name="checkout">Checkout</string>
-    <string name="checkout">Checkout</string>
+    <string name="pack_s">Pack(s)</string>
+    <string name="_385">385</string>
+    <string name="pack_size">Pack Size</string>
+    <string name="_3x10">3x10</string>
+    <string name="product_details">Product details</string>
+    <string name="constituents">constituents</string>
+    <string name="packs">packs</string>
+    <string name="random_id">PROBRYVOW1</string>
+    <string name="add_to_bag">Add to bag</string>
 </resources>
