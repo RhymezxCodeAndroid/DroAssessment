@@ -1,106 +1,170 @@
 package rhymezxcode.droassessment.Activities
 
+import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
+import android.os.AsyncTask
 import android.os.Bundle
+import android.text.TextUtils
 import android.view.View
+import android.widget.SearchView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.loader.content.AsyncTaskLoader
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.room.Room
+import androidx.room.RoomDatabase
+import androidx.sqlite.db.SupportSQLiteDatabase
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.android.synthetic.main.activity_product_details.*
 import kotlinx.android.synthetic.main.activity_view_products.*
+import kotlinx.android.synthetic.main.activity_view_products.back
+import kotlinx.android.synthetic.main.activity_view_products.bag
+import kotlinx.android.synthetic.main.product.*
+import rhymezxcode.droassessment.Adapters.bag_bottom_sheet_adapter
 import rhymezxcode.droassessment.Adapters.view_products_adapter
-import rhymezxcode.droassessment.Models.product
+import rhymezxcode.droassessment.DbProvider.Database
+import rhymezxcode.droassessment.DbProvider.ProductDao
+import rhymezxcode.droassessment.DbProvider.ProductViewModel
+import rhymezxcode.droassessment.Models.Bag
+import rhymezxcode.droassessment.Models.Product
 import rhymezxcode.droassessment.R
+import rhymezxcode.droassessment.Util.SPmanager
+import rhymezxcode.droassessment.Util.products
 
-class view_products : AppCompatActivity() {
-    var Allproducts = ArrayList<product>()
+
+class view_products : AppCompatActivity(){
+
+
     var activity = this@view_products
     var back_pressed: Long? = 0
     var showing: Boolean = false
+    lateinit var productViewModel: ProductViewModel
+    lateinit var all_products: RecyclerView
+    private val productAdapter = view_products_adapter()
+    private val bagAdapter = bag_bottom_sheet_adapter()
+    lateinit var searchView: SearchView
 
-    private val adapter = view_products_adapter()
+    @SuppressLint("ClickableViewAccessibility", "SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_view_products)
-        setupProductRecyclerView()
-        productData()
-        addToList()
+
+        all_products = findViewById(R.id.all_products)
+        searchView = findViewById(R.id.searchView)
+        searchView.isSubmitButtonEnabled()
+        searchView.setOnQueryTextListener(object: SearchView.OnQueryTextListener{
+            override fun onQueryTextSubmit(p0: String?): Boolean {
+                return false
+            }
+
+            override fun onQueryTextChange(p0: String?): Boolean {
+                productAdapter.filter.filter(p0)
+                return false
+            }
+        })
 
 
-        allItems.text = """${Allproducts.size} items(s)"""
+        productViewModel = ViewModelProvider(this).get(ProductViewModel::class.java)
+
+        productViewModel.getAllProduct()!!.observe(this, object : Observer<List<Product>> {
+            override fun onChanged(products: List<Product>?) {
+                if (products!!.size > 0) {
+                    setupProductRecyclerView()
+                    allItems.text = products.size.toString()+" item(s)"
+                    productAdapter.setProducts(activity, products.toMutableList())
+                }
+            }
+        })
+
+        productViewModel.getAllBagProduct()!!.observe(this, object : Observer<List<Bag>> {
+            override fun onChanged(bagProducts: List<Bag>?) {
+                if (bagProducts!!.size > 0) {
+                    setupBagProductRecyclerView()
+                    bottom_sheet_number.text = bagProducts.size.toString()
+                    val iterator = bagProducts.listIterator()
+                    var totalPrice = 0
+                    for(product in iterator){
+                       totalPrice += product.priceTag.toInt()
+                    }
+                    product_price.text = "\u20a6"+totalPrice.toString()
+                    bagAdapter.setBagProducts(activity, bagProducts.toMutableList(), productViewModel)
+                }
+            }
+        })
+
+        saveBag{
+            getBagProducts()
+        }.execute()
+
+        allItems.text = productViewModel.getAllProduct()!!.value?.size.toString()
+        bottom_sheet_number.text =  productViewModel.getAllBagProduct()!!.value?.size.toString()
         back.setOnClickListener(View.OnClickListener {
-           onBackPressed()
+            onBackPressed()
         })
 
         search_button.setOnClickListener(View.OnClickListener {
-            if(showing){
+            if (showing) {
                 searchView.visibility = View.GONE
-            }else{
+            } else {
                 searchView.visibility = View.VISIBLE
             }
             showing = !showing
 
         })
 
+
+
+
+
+
+
         BottomSheetBehavior.from(products_bottom_sheet).apply {
-            peekHeight*200
+            peekHeight = 200
             this.state = BottomSheetBehavior.STATE_COLLAPSED
         }
 
 
     }
 
+    private fun getBagProducts() {
+        val preference = getSharedPreferences(SPmanager.preferenceName, Context.MODE_PRIVATE)
+        val saveProduct = preference.getStringSet(SPmanager.Bag, HashSet<String>())
+        val products = products()
+        for (product in products.Products) {
+            if (saveProduct!!.contains(product.productName)) {
+                var bag = Bag(
+                    product.productImage,
+                    product.productName,
+                    product.productDescription,
+                    product.productGram,
+                    product.priceTag,
+                    product.productId
+                )
+                productViewModel.insertBagProduct(bag)
+            }
+        }
+
+    }
+
     private fun setupProductRecyclerView() {
         with(all_products) {
             layoutManager = GridLayoutManager(activity.applicationContext, 2)
-            adapter = activity.adapter
+            adapter = activity.productAdapter
+            productAdapter.notifyDataSetChanged()
         }
     }
 
-    private fun addToList() {
-        adapter.setProducts(activity, Allproducts)
-    }
-
-
-    fun productData(){
-        //parsing my static products, if it was a json array i would have used a loop.
-        val productOne = product(R.drawable.medicine.toString(), "Keztil Susp",
-            "1 pack of Keztil Susp contains 3 units of 10 Tablet(s).",
-            "750gm", "3000", getProductID())
-        Allproducts.add(productOne)
-        val productTwo = product(R.drawable.medicine.toString(), "Keztil",
-            "1 pack of Keztil contains 3 units of 10 Tablet(s).",
-            "550gm", "1000", getProductID())
-        Allproducts.add(productTwo)
-        val productThree = product(R.drawable.medicine.toString(), "Garlic oil",
-            "1 pack of Garlic oil contains 3 units of 10 Tablet(s).",
-            "950gm", "5000", getProductID())
-        Allproducts.add(productThree)
-        val productFour = product(R.drawable.medicine.toString(), "Folic Acid",
-            "1 pack of Folic acid contains 3 units of 10 Tablet(s).",
-            "500gm", "400", getProductID())
-        Allproducts.add(productFour)
-        val productFive = product(R.drawable.medicine.toString(), "Augmetin",
-            "1 pack of Augmetin contains 3 units of 10 Tablet(s).",
-            "600gm", "6000", getProductID())
-        Allproducts.add(productFive)
-        val productSix = product(R.drawable.medicine.toString(), "pazeo",
-            "1 pack of pazeo contains 3 units of 10 Tablet(s).",
-            "850gm", "550", getProductID())
-        Allproducts.add(productSix)
-        val productSeven = product(R.drawable.medicine.toString(), "Zarontin",
-            "1 pack of Zarontin contains 3 units of 10 Tablet(s).",
-            "1000gm", "2000", getProductID())
-        Allproducts.add(productSeven)
-        val productEight = product(R.drawable.medicine.toString(), "Panadol Extra",
-            "3 pack of Panadol Extra contains 3 units of 10 Tablet(s).",
-            "200gm", "300", getProductID())
-        Allproducts.add(productEight)
-    }
-
-    fun getProductID():String{
-        val allowedChars = ('A'..'Z') + ('a'..'z') + ('0'..'9')
-        return (1..8).map { allowedChars.random() }.joinToString("")
+    private fun setupBagProductRecyclerView() {
+        with(product_list) {
+            layoutManager = LinearLayoutManager(activity.applicationContext)
+            adapter = activity.bagAdapter
+            bagAdapter.notifyDataSetChanged()
+        }
     }
 
     override fun onBackPressed() {
@@ -117,6 +181,14 @@ class view_products : AppCompatActivity() {
                 Snackbar.LENGTH_SHORT
             ).show()
             back_pressed = System.currentTimeMillis()
+        }
+    }
+
+    @SuppressLint("StaticFieldLeak")
+    class saveBag(val handler: () -> Unit): AsyncTask<Void, Void, Void>(){
+        override fun doInBackground(vararg p0: Void?): Void? {
+            handler()
+            return null
         }
     }
 }

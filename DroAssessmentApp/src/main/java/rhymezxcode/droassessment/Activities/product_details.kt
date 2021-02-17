@@ -1,66 +1,111 @@
 package rhymezxcode.droassessment.Activities
 
+import android.content.Context
 import android.content.Intent
-import android.graphics.drawable.Drawable
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_product_details.*
-import rhymezxcode.droassessment.Models.bag
-import rhymezxcode.droassessment.Models.product
+import kotlinx.android.synthetic.main.activity_product_details.back
+import kotlinx.android.synthetic.main.activity_view_products.*
+import rhymezxcode.droassessment.DbProvider.ProductViewModel
+import rhymezxcode.droassessment.Models.Bag
 import rhymezxcode.droassessment.R
+import rhymezxcode.droassessment.Util.SPmanager
+import rhymezxcode.droassessment.Util.dialog
+import rhymezxcode.droassessment.Util.products
 
 class product_details : AppCompatActivity() {
     var back_pressed: Long? = 0
-    var Allproducts = ArrayList<bag>()
     var activity = this@product_details
     lateinit var bundle: Bundle
     lateinit var number_of_product: TextView
     var increment: Int = 1;
+    private var name: String? = null
+    lateinit var productViewModel: ProductViewModel
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_product_details)
 
+        productViewModel = ViewModelProvider(this).get(ProductViewModel::class.java)
         number_of_product = findViewById(R.id.number_of_products)
         bundle = intent.extras!!
 
         if (bundle != null) {
-//            drug_image.setImageDrawable(Drawable.createFromPath(bundle.getString("productImage")))
+            val requestOptions = RequestOptions().placeholder(R.drawable.ic_launcher_background)
+            Glide.with(activity!!.applicationContext)
+                .load(bundle.getString("productImage"))
+                .apply(requestOptions)
+                .into(drug_image)
+            name = bundle.getString("productName")
             product_name.text = bundle.getString("productName")
             product_gram.text = bundle.getString("productGram")
             constituents.text = bundle.getString("productName")
             product_id.text = bundle.getString("productId")
-            product_description.text = bundle.getString("productDescription")
-            price.text = bundle.getString("priceTag")
-            bagItems.text = "5"
+            product_name_two.text = bundle.getString("productDescription")
+            price.text = "\u20a6"+bundle.getString("priceTag")
 
         }
+
+        productViewModel.getAllBagProduct()!!.observe(this, object : Observer<List<Bag>> {
+            override fun onChanged(bagProducts: List<Bag>?) {
+                if (bagProducts!!.size > 0) {
+                   bagItems.text = bagProducts.size.toString()
+                }
+            }
+        })
+
         back.setOnClickListener(View.OnClickListener {
-           finish()
+            finish()
         })
 
         add_product.setOnClickListener(View.OnClickListener {
             increment++
             number_of_products.text = increment.toString()
+            price.text = "\u20a6"+(bundle.getString("priceTag")!!.toInt() * increment).toString()
+
+            val preference = activity.getSharedPreferences(SPmanager.preferenceName, Context.MODE_PRIVATE)
+            val editor = preference.edit()
+            editor.putString(SPmanager.BagIncrement, increment.toString())
+            editor.apply()
         })
+
         minus_product.setOnClickListener(View.OnClickListener {
             increment--
-            if(increment < 1){
+            if (increment < 1) {
                 increment = 1
             }
             number_of_products.text = increment.toString()
+            price.text = "\u20a6"+(bundle.getString("priceTag")!!.toInt() * increment).toString()
 
-
+            val preference = activity!!.getSharedPreferences(SPmanager.preferenceName, Context.MODE_PRIVATE)
+            val editor = preference.edit()
+            editor.putString(SPmanager.BagIncrement, increment.toString())
+            editor.apply()
         })
 
         add_to_bag.setOnClickListener(View.OnClickListener {
-            val productOne = bag(bundle.getString("productImage")!!, bundle.getString("productName")!!,
-                number_of_product.toString(),
-                bundle.getString("productGram")!!, bundle.getString("priceTag")!!)
-            Allproducts.add(productOne)
+            val preference = getSharedPreferences(SPmanager.preferenceName, Context.MODE_PRIVATE)
+            val editor = preference.edit()
+            val saveProduct = preference.getStringSet(SPmanager.Bag, HashSet<String>())
+            val products = products()
+            for(product in products.Products){
+                if(!saveProduct!!.contains(name)){
+                    saveProduct.add(name)
+                    editor.putStringSet(SPmanager.Bag, saveProduct)
+                    editor.apply()
+                    dialog(this, name + " has been added to your bag").showDialog()
+                }
+            }
+
         })
     }
 

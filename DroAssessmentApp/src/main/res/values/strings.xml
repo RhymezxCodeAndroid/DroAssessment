@@ -4,7 +4,6 @@
     <string name="medicine_photo">medicine photo</string>
     <string name="garlic_oil">Garlic oil</string>
     <string name="soft_gel_650mg">Soft gel - 650mg</string>
-    <string name="n1000">1000</string>
     <string name="_4">4</string>
     <string name="bag">Bag</string>
     <string name="tap_on_an_item_for_add_remove_and_delete_option">Tap on an item for add, remove and delete option</string>
@@ -24,4 +23,9 @@
     <string name="random_id">PROBRYVOW1</string>
     <string name="add_to_bag">Add to bag</string>
     <string name="description">1 pack of Garlic oil contains 3 units of 10 Tablet(s).</string>
+    <string name="done">Done</string>
+    <string name="view_bag">View Bag</string>
+    <string name="garlic_oil_has_been_added_to_your_bag">Garlic oil has been added to your bag</string>
+    <string name="successful">Successful</string>
+    <string name="n1000">₦1000</string>
 </resources>

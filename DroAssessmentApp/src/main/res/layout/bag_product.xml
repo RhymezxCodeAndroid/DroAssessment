@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_weight="10"
     android:background="@color/DroPurple"
     android:orientation="horizontal"
     android:padding="10dp">
@@ -27,7 +26,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/product_description"
+        android:id="@+id/product_name_two"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
@@ -52,7 +51,7 @@
         android:textColor="@android:color/background_light"
         android:textSize="18sp"
         android:textStyle="bold"
-        app:layout_constraintStart_toEndOf="@+id/product_description"
+        app:layout_constraintStart_toEndOf="@+id/product_name_two"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
@@ -65,18 +64,8 @@
         android:text="@string/soft_gel_650mg"
         android:textColor="@color/cardview_light_background"
         android:textSize="12sp"
-        app:layout_constraintStart_toEndOf="@+id/product_description"
+        app:layout_constraintStart_toEndOf="@+id/product_name_two"
         app:layout_constraintTop_toBottomOf="@+id/product_name" />
-
-    <ImageView
-        android:id="@+id/naira"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:layout_marginTop="15dp"
-        android:scaleType="centerCrop"
-        android:src="@drawable/ic_naira_24px"
-        app:layout_constraintEnd_toStartOf="@+id/product_price"
-        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/product_price"

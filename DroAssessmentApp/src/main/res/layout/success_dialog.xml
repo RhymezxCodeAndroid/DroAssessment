@@ -1,10 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="350dp"
     android:layout_height="250dp"
     android:background="@drawable/round_corner_shape_dialog"
     android:backgroundTint="#FFFFFF">
+
+    <ImageView
+        android:id="@+id/success_icon"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/oval_shape"
+        android:backgroundTint="@color/design_default_color_background"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ok_48px" />
 
     <TextView
         android:id="@+id/product_name"
@@ -12,7 +25,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:fontFamily="@font/proxima_nova_regular"
-        android:text="Successful"
+        android:text="@string/successful"
         android:textColor="@android:color/background_dark"
         android:textSize="18sp"
         android:textStyle="bold"
@@ -20,27 +33,15 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/success_icon" />
 
-    <ImageView
-        android:id="@+id/success_icon"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:background="@drawable/oval_shape"
-        android:backgroundTint="@color/design_default_color_background"
-        app:layout_constraintBottom_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ok_48px" />
-
     <TextView
-        android:id="@+id/drug_info"
+        android:id="@+id/product_info"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
         android:layout_marginTop="20dp"
         android:layout_marginEnd="10dp"
         android:fontFamily="@font/proxima_nova_regular"
-        android:text="Garlic oil has been added to your bag"
+        android:text="@string/garlic_oil_has_been_added_to_your_bag"
         android:textColor="@android:color/background_dark"
         android:textSize="18sp"
         android:textStyle="bold"
@@ -55,13 +56,13 @@
         android:layout_marginTop="10dp"
         android:background="@color/DroTurquoise"
         android:fontFamily="@font/proxima_nova_regular"
-        android:text="View Bag"
+        android:text="@string/view_bag"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         android:textColor="@color/design_default_color_background"
         android:typeface="normal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/drug_info" />
+        app:layout_constraintTop_toBottomOf="@+id/product_info" />
 
     <Button
         android:id="@+id/done"
@@ -69,7 +70,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:background="@color/DroTurquoise"
-        android:text="Done"
+        android:text="@string/done"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         android:textColor="@color/design_default_color_background"
         app:layout_constraintEnd_toEndOf="parent"
