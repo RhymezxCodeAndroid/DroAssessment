@@ -2,35 +2,37 @@ package rhymezxcode.droassessment.Adapters
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.Context
 import android.os.AsyncTask
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import rhymezxcode.droassessment.Adapters.bag_bottom_sheet_adapter.bag_holder
+import rhymezxcode.droassessment.DbProvider.Database
 import rhymezxcode.droassessment.DbProvider.ProductViewModel
 import rhymezxcode.droassessment.Models.Bag
-import rhymezxcode.droassessment.Models.Product
 import rhymezxcode.droassessment.R
-import rhymezxcode.droassessment.Util.SPmanager
-import kotlin.collections.ArrayList
-import kotlin.collections.HashSet
+
 
 class bag_bottom_sheet_adapter : RecyclerView.Adapter<bag_holder>() {
     var bagItems: MutableList<Bag> = ArrayList()
     var activity: Activity? = Activity()
-    lateinit var productViewModel: ProductViewModel
 
-    fun setBagProducts(activity: Activity, bagItems: MutableList<Bag>, productViewModel: ProductViewModel) {
+    companion object{
+        var itemClicked: ItemClicked? = null
+    }
+
+
+    fun setBagProducts(
+        activity: Activity,
+        bagItems: MutableList<Bag>,
+    ) {
         this.bagItems = bagItems
         this.activity = activity
-        this.productViewModel = productViewModel
         this.notifyDataSetChanged()
     }
 
@@ -98,14 +100,16 @@ class bag_bottom_sheet_adapter : RecyclerView.Adapter<bag_holder>() {
                             increment = 1
                         }
                         numberOfProducts.text = increment.toString()
-                        productTimes.text = increment.toString()+"X"
-                        productPrice.text = "\u20a6"+(eachProduct.priceTag.toInt() * increment).toString()
+                        productTimes.text = increment.toString() + "X"
+                        productPrice.text =
+                            "\u20a6" + (eachProduct.priceTag.toInt() * increment).toString()
                     })
                     add.setOnClickListener(View.OnClickListener {
                         increment++
                         numberOfProducts.text = increment.toString()
-                        productTimes.text = increment.toString()+"X"
-                        productPrice.text = "\u20a6"+(eachProduct.priceTag.toInt() * increment).toString()
+                        productTimes.text = increment.toString() + "X"
+                        productPrice.text =
+                            "\u20a6" + (eachProduct.priceTag.toInt() * increment).toString()
                     })
                 }
                 isShowing = !isShowing
@@ -115,17 +119,8 @@ class bag_bottom_sheet_adapter : RecyclerView.Adapter<bag_holder>() {
 
         fun removeAt(position: Int){
             val eachProduct = bagItems[position]
-            val preference = activity!!.getSharedPreferences(SPmanager.preferenceName, Context.MODE_PRIVATE)
-            val editor = preference.edit()
-            val saveProduct = preference.getStringSet(SPmanager.Bag, HashSet<String>())
-
-            saveProduct!!.remove(eachProduct.productName)
-            editor.remove(SPmanager.Bag)
-            editor.apply()
-            editor.putStringSet(SPmanager.Bag, saveProduct)
-            editor.apply()
-            bagItems.removeAt(position)
             val bag = Bag(
+                eachProduct.id,
                 eachProduct.productImage,
                 eachProduct.productName,
                 eachProduct.productDescription,
@@ -133,22 +128,16 @@ class bag_bottom_sheet_adapter : RecyclerView.Adapter<bag_holder>() {
                 eachProduct.priceTag,
                 eachProduct.productId
             )
-            deleteBag{
-                productViewModel.deleteBagProduct(bag)
-            }.execute()
+            itemClicked?.deleteClicked(bag)
+            bagItems.removeAt(position)
             notifyItemRemoved(position)
             notifyItemRangeChanged(position, bagItems.size)
-            bag_bottom_sheet_adapter().notifyDataSetChanged()
         }
 
 
     }
 
-    @SuppressLint("StaticFieldLeak")
-    class deleteBag(val handler: () -> Unit): AsyncTask<Void, Void, Void>(){
-        override fun doInBackground(vararg p0: Void?): Void? {
-            handler()
-            return null
-        }
+    interface ItemClicked {
+        fun deleteClicked(bag: Bag?)
     }
 }

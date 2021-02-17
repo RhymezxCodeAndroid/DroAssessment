@@ -5,27 +5,20 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "Bag")
-data class Bag (@ColumnInfo(name = "ProductImage")
-                    var productImage: String,
-                @ColumnInfo(name = "ProductName")
-                    var productName: String,
-                @ColumnInfo(name = "ProductDescription")
-                    var productDescription: String,
-                @ColumnInfo(name = "ProductGram")
-                    var productGram: String,
-                @ColumnInfo(name = "PriceTag")
-                    var priceTag: String,
-                @ColumnInfo(name = "ProductId")
-                    var productId: String){
+data class Bag(
     @PrimaryKey(autoGenerate = true)
-    private var id = 0
-
-    fun getId(): Int {
-        return id
-    }
-
-    fun setId(id: Int) {
-        this.id = id
-    }
-}
+    var id: Int,
+    @ColumnInfo(name = "ProductImage")
+    var productImage: String,
+    @ColumnInfo(name = "ProductName")
+    var productName: String,
+    @ColumnInfo(name = "ProductDescription")
+    var productDescription: String,
+    @ColumnInfo(name = "ProductGram")
+    var productGram: String,
+    @ColumnInfo(name = "PriceTag")
+    var priceTag: String,
+    @ColumnInfo(name = "ProductId")
+    var productId: String
+)
 

@@ -20,6 +20,9 @@ interface ProductDao {
     @Delete
     fun deleteBagProduct(bag: Bag?)
 
+    @Query("DELETE FROM Bag WHERE id = :id")
+    fun deleteBagById(id: Int?)
+
     @Update
     fun updateProduct(product: Product?)
 
@@ -31,6 +34,8 @@ interface ProductDao {
 
     @Query("SELECT * from Bag")
     fun getAllBagProduct(): LiveData<List<Bag>>
+
+
 
 
 

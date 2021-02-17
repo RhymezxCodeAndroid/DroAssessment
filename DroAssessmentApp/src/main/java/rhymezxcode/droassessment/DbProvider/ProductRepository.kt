@@ -1,7 +1,10 @@
 package rhymezxcode.droassessment.DbProvider
 
+import android.annotation.SuppressLint
 import android.app.Application
+import android.os.AsyncTask
 import androidx.lifecycle.LiveData
+import androidx.loader.content.AsyncTaskLoader
 import rhymezxcode.droassessment.DbProvider.Database.Companion.buildDatabase
 import rhymezxcode.droassessment.DbProvider.Database.Companion.getDatabase
 import rhymezxcode.droassessment.Models.Bag
@@ -23,30 +26,48 @@ class ProductRepository(application: Application?) {
     }
 
     fun getAllBagProduct(): LiveData<List<Bag>>? {
-        return productDao!!.getAllBagProduct()
+            return productDao!!.getAllBagProduct()
     }
 
     fun insertProduct(product: Product?) {
-        database!!.ProductDao()!!.insertProduct(product)
+        AsyncTask.execute {
+            database!!.ProductDao()!!.insertProduct(product)
+        }
     }
 
     fun insertBagProduct(bag: Bag?) {
-        database!!.ProductDao()!!.insertBagProduct(bag)
+        AsyncTask.execute {
+            database!!.ProductDao()!!.insertBagProduct(bag)
+        }
     }
 
     fun deleteProduct(product: Product?) {
-        database!!.ProductDao()!!.deleteProduct(product)
+        AsyncTask.execute {
+            database!!.ProductDao()!!.deleteProduct(product)
+        }
     }
 
     fun deleteBagProduct(bag: Bag?) {
-        database!!.ProductDao()!!.deleteBagProduct(bag)
+        AsyncTask.execute {
+            database!!.ProductDao()!!.deleteBagProduct(bag)
+        }
+    }
+
+    fun deleteBagById(id: Int?) {
+        AsyncTask.execute {
+            database!!.ProductDao()!!.deleteBagById(id)
+        }
     }
 
     fun updateProduct(product: Product?) {
-        database!!.ProductDao()!!.updateProduct(product)
+        AsyncTask.execute {
+            database!!.ProductDao()!!.updateProduct(product)
+        }
     }
 
     fun updateBagProduct(bag: Bag?) {
-        database!!.ProductDao()!!.updateBagProduct(bag)
+        AsyncTask.execute {
+            database!!.ProductDao()!!.updateBagProduct(bag)
+        }
     }
 }

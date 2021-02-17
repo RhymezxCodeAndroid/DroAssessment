@@ -5,46 +5,37 @@ import android.content.Context
 import android.content.Intent
 import android.os.AsyncTask
 import android.os.Bundle
-import android.text.TextUtils
 import android.view.View
 import android.widget.SearchView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.loader.content.AsyncTaskLoader
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.room.Room
-import androidx.room.RoomDatabase
-import androidx.sqlite.db.SupportSQLiteDatabase
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_product_details.*
 import kotlinx.android.synthetic.main.activity_view_products.*
 import kotlinx.android.synthetic.main.activity_view_products.back
 import kotlinx.android.synthetic.main.activity_view_products.bag
-import kotlinx.android.synthetic.main.product.*
 import rhymezxcode.droassessment.Adapters.bag_bottom_sheet_adapter
 import rhymezxcode.droassessment.Adapters.view_products_adapter
-import rhymezxcode.droassessment.DbProvider.Database
-import rhymezxcode.droassessment.DbProvider.ProductDao
 import rhymezxcode.droassessment.DbProvider.ProductViewModel
 import rhymezxcode.droassessment.Models.Bag
 import rhymezxcode.droassessment.Models.Product
 import rhymezxcode.droassessment.R
-import rhymezxcode.droassessment.Util.SPmanager
+import rhymezxcode.droassessment.Util.PreferenceConstant
 import rhymezxcode.droassessment.Util.products
 
 
-class view_products : AppCompatActivity(){
-
-
+class view_products : AppCompatActivity(), bag_bottom_sheet_adapter.ItemClicked{
     var activity = this@view_products
     var back_pressed: Long? = 0
     var showing: Boolean = false
     lateinit var productViewModel: ProductViewModel
     lateinit var all_products: RecyclerView
+    lateinit var product_list: RecyclerView
     private val productAdapter = view_products_adapter()
     private val bagAdapter = bag_bottom_sheet_adapter()
     lateinit var searchView: SearchView
@@ -55,6 +46,7 @@ class view_products : AppCompatActivity(){
         setContentView(R.layout.activity_view_products)
 
         all_products = findViewById(R.id.all_products)
+        product_list = findViewById(R.id.product_list)
         searchView = findViewById(R.id.searchView)
         searchView.isSubmitButtonEnabled()
         searchView.setOnQueryTextListener(object: SearchView.OnQueryTextListener{
@@ -67,7 +59,6 @@ class view_products : AppCompatActivity(){
                 return false
             }
         })
-
 
         productViewModel = ViewModelProvider(this).get(ProductViewModel::class.java)
 
@@ -85,24 +76,25 @@ class view_products : AppCompatActivity(){
             override fun onChanged(bagProducts: List<Bag>?) {
                 if (bagProducts!!.size > 0) {
                     setupBagProductRecyclerView()
-                    bottom_sheet_number.text = bagProducts.size.toString()
                     val iterator = bagProducts.listIterator()
                     var totalPrice = 0
                     for(product in iterator){
                        totalPrice += product.priceTag.toInt()
                     }
-                    product_price.text = "\u20a6"+totalPrice.toString()
-                    bagAdapter.setBagProducts(activity, bagProducts.toMutableList(), productViewModel)
+                    if(bagProducts.size == null){
+                        bottom_sheet_number.text = "0"
+                    }else{
+                        bottom_sheet_number.text = bagProducts.size.toString()
+                    }
+
+                        product_price.text = "\u20a6"+totalPrice.toString()
+
+                    bagAdapter.setBagProducts(activity, bagProducts.toMutableList())
+                    bagAdapter.notifyDataSetChanged()
                 }
             }
         })
 
-        saveBag{
-            getBagProducts()
-        }.execute()
-
-        allItems.text = productViewModel.getAllProduct()!!.value?.size.toString()
-        bottom_sheet_number.text =  productViewModel.getAllBagProduct()!!.value?.size.toString()
         back.setOnClickListener(View.OnClickListener {
             onBackPressed()
         })
@@ -117,37 +109,11 @@ class view_products : AppCompatActivity(){
 
         })
 
-
-
-
-
-
-
         BottomSheetBehavior.from(products_bottom_sheet).apply {
             peekHeight = 200
             this.state = BottomSheetBehavior.STATE_COLLAPSED
         }
 
-
-    }
-
-    private fun getBagProducts() {
-        val preference = getSharedPreferences(SPmanager.preferenceName, Context.MODE_PRIVATE)
-        val saveProduct = preference.getStringSet(SPmanager.Bag, HashSet<String>())
-        val products = products()
-        for (product in products.Products) {
-            if (saveProduct!!.contains(product.productName)) {
-                var bag = Bag(
-                    product.productImage,
-                    product.productName,
-                    product.productDescription,
-                    product.productGram,
-                    product.priceTag,
-                    product.productId
-                )
-                productViewModel.insertBagProduct(bag)
-            }
-        }
 
     }
 
@@ -184,11 +150,8 @@ class view_products : AppCompatActivity(){
         }
     }
 
-    @SuppressLint("StaticFieldLeak")
-    class saveBag(val handler: () -> Unit): AsyncTask<Void, Void, Void>(){
-        override fun doInBackground(vararg p0: Void?): Void? {
-            handler()
-            return null
-        }
+    override fun deleteClicked(bag: Bag?) {
+           productViewModel.deleteBagProduct(bag)
     }
+
 }

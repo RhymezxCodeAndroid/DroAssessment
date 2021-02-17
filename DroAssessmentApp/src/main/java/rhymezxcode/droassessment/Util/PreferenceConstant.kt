@@ -1,6 +1,6 @@
 package rhymezxcode.droassessment.Util
 
-object SPmanager {
+object PreferenceConstant {
     var preferenceName = "Preference"
     var Bag = "bag_product"
     var BagSize = "bag_size"

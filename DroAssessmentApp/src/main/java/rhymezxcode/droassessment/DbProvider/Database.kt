@@ -9,7 +9,7 @@ import rhymezxcode.droassessment.Models.Product
 import rhymezxcode.droassessment.Util.products
 import java.util.concurrent.Executors
 
-@androidx.room.Database(entities = [Product::class, Bag::class], version = 1, exportSchema = false)
+@androidx.room.Database(entities = arrayOf(Product::class, Bag::class), version = 1, exportSchema = false)
 abstract class Database : RoomDatabase() {
     abstract fun ProductDao(): ProductDao?
 
@@ -24,7 +24,7 @@ abstract class Database : RoomDatabase() {
                     if (INSTANCE == null) {
                         INSTANCE = Room.databaseBuilder(
                             context!!, Database::class.java, "Product.db"
-                        ).allowMainThreadQueries().build()
+                        ).build()
                         INSTANCE = buildDatabase(context)
                     }
                 }

@@ -53,4 +53,8 @@ class ProductViewModel(application: Application) : AndroidViewModel(application)
     fun deleteBagProduct(bag: Bag?) {
         productRepository!!.deleteBagProduct(bag)
     }
+
+    fun deleteBagById(id: Int?) {
+        productRepository!!.deleteBagById(id)
+    }
 }
